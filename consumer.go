@@ -110,7 +110,7 @@ func initOsClient(ctx context.Context) (*opensearchapi.Client, error) {
 	_, err = client.Indices.Exists(ctx, opensearchapi.IndicesExistsReq{Indices: []string{"wikimedia"}})
 
 	if err != nil {
-		if err.Error() == "status: [404 Not Found]" {
+		if messageErr, ok := err.(*opensearch.MessageError); ok && messageErr.Status == "404" {
 			_, err := client.Indices.Create(ctx, opensearchapi.IndicesCreateReq{Index: "wikimedia"})
 
 			if err != nil {
